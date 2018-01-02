@@ -6,24 +6,22 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Factory;
-
 
 public class Main {
     public static void main(String[] args) {
-        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:auth.ini");
-        SecurityManager securityManager = factory.getInstance();
-
-        SecurityUtils.setSecurityManager(securityManager);
+        setUpUsers();
 
         tryLogin();
         tryLogin();
     }
     
-    public static void tryLogin() {
+    private static void setUpUsers() {
+        UserManager userManager = InMemoryUserManager.getInstance();
+        userManager.addUser("hajix", "verysafepassword");
+    }
+
+    private static void tryLogin() {
         Subject currentUser = SecurityUtils.getSubject();
 
         if (!currentUser.isAuthenticated()) {
