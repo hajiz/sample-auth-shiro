@@ -1,9 +1,9 @@
 package com.hajix.auth.sampleauthshiro;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.SimpleAccountRealm;
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
 public class InMemoryUserManager implements UserManager {
     private static InMemoryUserManager instance;
@@ -20,7 +20,7 @@ public class InMemoryUserManager implements UserManager {
 
     private InMemoryUserManager() {
         realm = new SimpleAccountRealm();
-        securityManager = new DefaultSecurityManager(realm);
+        securityManager = new DefaultWebSecurityManager(realm);
         SecurityUtils.setSecurityManager(securityManager);
     }
 

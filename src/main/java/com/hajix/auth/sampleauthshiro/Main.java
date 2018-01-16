@@ -1,46 +1,22 @@
 package com.hajix.auth.sampleauthshiro;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.mgt.WebSecurityManager;
+
 
 public class Main {
     public static void main(String[] args) {
-        setUpUsers();
+        UserManager userManager = InMemoryUserManager.getInstance();
 
-        tryLogin();
-        tryLogin();
+        setUpUsers(userManager);
+        
+        try {
+            WebServer.start((WebSecurityManager) userManager.getSecurityManager());
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
     
-    private static void setUpUsers() {
-        UserManager userManager = InMemoryUserManager.getInstance();
+    private static void setUpUsers(UserManager userManager) {
         userManager.addUser("hajix", "verysafepassword");
-    }
-
-    private static void tryLogin() {
-        Subject currentUser = SecurityUtils.getSubject();
-
-        if (!currentUser.isAuthenticated()) {
-            UsernamePasswordToken token = new UsernamePasswordToken("hajix", "verysafepassword");
-            token.setRememberMe(true);
-            try {
-                currentUser.login(token);
-                System.out.println("Login successful");
-            } catch (UnknownAccountException uae) {
-                System.out.println("There is no user with username of " + token.getPrincipal());
-            } catch (IncorrectCredentialsException ice) {
-                System.out.println("Password for account " + token.getPrincipal() + " was incorrect!");
-            } catch (LockedAccountException lae) {
-                System.out.println("The account for username " + token.getPrincipal() + " is locked.");
-            } catch (AuthenticationException ae) {
-                throw ae;
-            }
-        } else {
-            System.out.println("User already authenticated");
-        }
     }
 }
